@@ -1,0 +1,14 @@
+{
+  "name": "Pénztarca",
+  "description": "Pénztárca",
+  "launch_path": "/index.html",
+  "icons": {
+    "512": "/img/icon-512.png",
+    "128": "/img/icon-128.png"
+  },
+  "developer": {
+    "name": "Fülöp József",
+    "url": "http://www.valami.com/"
+  },
+  "default_locale": "hu"
+}

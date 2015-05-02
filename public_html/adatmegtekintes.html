@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+
+<html>
+    <head>
+        <title>Tranzakciók Megtekintése</title>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link href="css/headers.css" rel="stylesheet" type="text/css">
+        <link href="css/drawer.css" rel="stylesheet" type="text/css">
+        <link href="css/app.css" rel="stylesheet" type="text/css">
+        <link href="css/layout.css" rel="stylesheet" type="text/css"/>
+        <link href="css/input_areas.css" rel="stylesheet" type="text/css">
+        <link href="css/switches.css" rel="stylesheet" type="text/css">
+        <link href="css/lists.css" rel="stylesheet" type="text/css">
+        <link href="css/buttons.css" rel="stylesheet" type="text/css">
+        <link href="css/toolbars.css" rel="stylesheet" type="text/css">
+        <script src="jquery-1.11.2.min.js" type="text/javascript"></script>
+
+    </head>
+    <body>
+        <div> 
+            <section data-type="sidebar">
+                <header>
+                    <h1>Menü</h1>
+                </header>
+                <nav>
+                    <ul>
+                        <li><a href="index.html">Pénztárca</a></li>
+                        <li><a href="hol_hozzaadasa.html">Hol-ok Karbantartása</a></li>
+                        <li><a href="kilepes.html">Kilépés</a></li>
+                    </ul>
+                </nav>
+            </section>
+
+            <section id="drawer" role="region">
+                <header>
+                    <a href="#content"><span class="icon icon-menu">hide sidebar</span></a>
+                    <a href="#drawer"><span class="icon icon-menu">show sidebar</span></a>
+                    <h1>Tranzakciók Megtekintése</h1>
+                </header>
+
+
+                <div role="main" style="height: 700px">
+                    <table id="printOutput" style="border: 1px solid black">
+                        <tr><th>Dátum</th><th>Idő</th><th>Összeg</th><th>Hol</th><th>Mód</th></tr>
+                        
+                    </table>
+                </div>
+            </section></div>
+
+        <script type="text/javascript">
+            (function listazas() {
+                var db;
+                //var IDBTransaction_ = window.IDBTransaction;
+                var indexedDB = window.indexedDB;
+
+                var request = indexedDB.open("penz_adattar", 2);
+                request.onsuccess = function (evt) {
+                    db = request.result;
+                    
+                    var transaction_ = db.transaction("tranzakciok", "readwrite");
+                    var objectStore = transaction_.objectStore("tranzakciok");
+
+                    var request_ = objectStore.openCursor();
+                    request_.onsuccess = function (evt) {
+                        var cursor = evt.target.result;
+                        var tr;
+                        
+                        
+                        if (cursor) {
+                            tr = document.createElement("tr");
+                            tr.innerHTML="<td style='border: solid'>" + cursor.value.datum + "</td>" + "<td style='border: solid'>" + cursor.value.ido + "</td>" + "<td style='border: solid'>" + cursor.value.osszeg + "</td>"  + "<td style='border: solid'>" + cursor.value.hol + "</td>"  + "<td style='border: solid'>" + cursor.value.mod + "</td>";
+                            document.getElementById("printOutput").appendChild(tr);
+                            cursor.continue();
+                        }
+
+                        else {
+                            //console.log("No more entries!");
+                        }
+                    };
+
+                    
+                };
+
+                request.onerror = function (evt) {
+                    console.log("IndexedDB Hiba: " + evt.target.errorCode);
+                };
+
+              
+
+            }
+            )();
+
+
+
+
+
+
+        </script>
+    </body>
+</html>
