@@ -6,11 +6,34 @@ and open the template in the editor.
 -->
 <html>
     <head>
-        <title>TODO supply a title</title>
+        <title>Kilépés</title>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link href="css/confirm.css" rel="stylesheet" type="text/css"/>
+
     </head>
     <body>
-        <div>TODO write content</div>
+        <form role="dialog" data-type="confirm" onsubmit="return false;">
+            <section>
+                <h1>Megerősítés</h1><!-- this heading is optional -->
+                <p>Valóban ki szeretnél lépni?</p>
+            </section>
+            <menu>
+                <button class="recommend">Nem</button>
+                <button class="danger">Igen</button>
+            </menu>
+        </form>
+        <script>
+            function back () {
+                window.location.href = "index.html";
+            }
+            
+            function exit () {
+                window.close();
+            }
+            
+            document.querySelector(".recommend").addEventListener("click", back);
+            document.querySelector(".danger").addEventListener("click", exit);
+        </script>
     </body>
 </html>
