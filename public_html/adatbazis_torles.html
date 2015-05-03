@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+
+<html>
+    <head>
+        <title>Kérdés</title>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link href="css/confirm.css" rel="stylesheet" type="text/css"/>
+
+    </head>
+    <body>
+        <form role="dialog" data-type="confirm" onsubmit="return false;">
+            <section>
+                <h1>Kérdés</h1><!-- this heading is optional -->
+                <p>Valóban törölni szeretnéd a Teljes "Pénz Adattár Adatbázist?"</p>
+            </section>
+            <menu>
+                <button class="recommend">Vissza</button>
+                <button class="danger">Törlés</button>
+            </menu>
+        </form>
+        <script>
+            function back() {
+                window.location.href = "index.html";
+            }
+
+            function vegrehajt() {
+                var req = window.indexedDB.deleteDatabase("");
+                req.onsuccess = function () {
+                    console.log("Deleted database successfully");
+                };
+                
+                req.onerror = function () {
+                    console.log("Couldn't delete database");
+                };
+                
+                req.onblocked = function () {
+                    console.log("Couldn't delete database due to the operation being blocked");
+                };
+                
+                window.close();
+
+            }
+
+            document.querySelector(".recommend").addEventListener("click", back);
+            document.querySelector(".danger").addEventListener("click", vegrehajt);
+        </script>
+    </body>
+</html>
