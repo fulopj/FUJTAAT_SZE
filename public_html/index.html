@@ -16,7 +16,7 @@
         <link href="css/toolbars.css" rel="stylesheet" type="text/css">
         <script src="jquery-1.11.2.min.js" type="text/javascript"></script>
 
-  </head>
+    </head>
     <body>
         <div>
             <section data-type="sidebar">
@@ -25,7 +25,7 @@
                 </header>
                 <nav>
                     <ul>
-                        <li><a href="hol_megtekintese.html">Hol-ok Megtekintése és Karbantartása</a></li>
+                        <li><a href="hol_megtekintese.html">Hol-ok Karbantartása</a></li>
                         <li><a href="adatmegtekintes.html">Tranzakciók megtekintése</a></li>
                         <li><a href="adatbazis_torles.html">Adatbázis Teljes Törlése</a></li>
                         <li><a href="kilepes.html">Kilépés</a></li>
@@ -42,20 +42,20 @@
                 <div role="main">
                     <section class="gaia-list fit scroll sticky">
                         <article>
-                            <form onsubmit="return false;" style="height: 700px">
+                            <form onsubmit="return false;">
                                 <label>Dátum és Idő:</label><br />
                                 <input type="date" id="datum" style="width:49%" />
                                 <input type="time" id="ido" style="width:49%"/>
                                 <label>Összeg:</label>
                                 <input type="number" id="osszeg" />
-                                
+
                                 <label>Költési helye</label><br />
                                 <select id="Hol">
-                                    
+
                                 </select>
-                                
+
                                 <br />
-                                
+
                                 <label>Költés módja</label><br />
                                 <select id="Mod">
                                     <option>Pénztárca</option>
@@ -69,99 +69,97 @@
                 </div>
             </section>
         </div>
-        
+
         <script type="text/javascript">
             var db;
             var IDBTransaction = window.IDBTransaction;
             var indexedDB = window.indexedDB;
 
-            (function () {
-                var minta = [
-                    {datum: "2015-01-01", ido: "00:00:00", osszeg: 1000, hol: "Vár söröző", mod: "Pénztárca"},
-                    {datum: "2015-01-01", ido: "00:00:01", osszeg: 2000, hol: "Vár söröző", mod: "Bankkártya"}
-                ];
-                
-                var minta_Hol = [
-                    {megnevezes: "Bolt"}
-                ];
-                
-                function initDb() {
-                    var request = indexedDB.open("penz_adattar", 2);
-                    request.onsuccess = function (evt) {
-                        db = request.result;
-                        var transaction_ = db.transaction("hol_ok", "readwrite");
-                        var objectStore = transaction_.objectStore("hol_ok");
+            var minta = [
+                {datum: "2015-01-01", ido: "00:00:00", osszeg: 1000, hol: "Vár söröző", mod: "Pénztárca"},
+                {datum: "2015-01-01", ido: "00:00:01", osszeg: 2000, hol: "Vár söröző", mod: "Bankkártya"}
+            ];
 
-                        var request_ = objectStore.openCursor();
-                        request_.onsuccess = function (evt) {
-                            var cursor = evt.target.result;
-                            var option;
-                            if (cursor) {
-                                option = document.createElement("option");
-                                option.innerHTML=cursor.value.megnevezes;
-                                document.getElementById("Hol").appendChild(option);
-                                cursor.continue();
-                            }
-                        };
-                    };
-                    
-                    request.onerror = function (evt) {
-                        console.log("IndexedDB Hiba: " + evt.target.errorCode);
-                    };
-                    
-                    request.onupgradeneeded = function (evt) {
-                        var objectStore = evt.currentTarget.result.createObjectStore ("tranzakciok", {keyPath: "id", autoIncrement: true});
-                        objectStore.createIndex("datum", "datum", {unique: false});
-                        
-                        var objectStore_Hol = evt.currentTarget.result.createObjectStore("hol_ok", {keyPath: "id", autoIncrement: true});
-                        
-                        var i;
-                        for (i in minta) {
-                            objectStore.add(minta[i]);
-                        }
-                        
-                        var j;
-                        for (j in minta_Hol) {
-                            objectStore_Hol.add(minta_Hol[j]);
+            var minta_Hol = [
+                {megnevezes: "Bolt"}
+            ];
+
+            function initDb() {
+                var request = indexedDB.open("penz_adattar", 2);
+                request.onsuccess = function (evt) {
+                    db = request.result;
+                    var transaction_ = db.transaction("hol_ok", "readwrite");
+                    var objectStore = transaction_.objectStore("hol_ok");
+
+                    var cursor_nyitas = objectStore.openCursor();
+                    cursor_nyitas.onsuccess = function (evt) {
+                        var cursor = evt.target.result;
+                        var option;
+                        if (cursor) {
+                            option = document.createElement("option");
+                            option.innerHTML = cursor.value.megnevezes;
+                            document.getElementById("Hol").appendChild(option);
+                            cursor.continue();
                         }
                     };
-                }
-                
-                
-                
+                };
 
-                var btnAdd = document.getElementById("btnSaveTransaction");
-                btnAdd.addEventListener(
-                        "click", function () {
-                            var datum = document.getElementById("datum").value;
-                            var ido = document.getElementById("ido").value;
-                            var osszeg = document.getElementById("osszeg").value;
-                            var hol = document.getElementById("Hol").value;
-                            var mod = document.getElementById("Mod").value;
+                request.onerror = function (evt) {
+                    console.log("IndexedDB Hiba: " + evt.target.errorCode);
+                };
 
-                            var transaction = db.transaction("tranzakciok", "readwrite");
-                            var objectStore = transaction.objectStore("tranzakciok");
-                            var newItem = [{datum: datum, ido: ido, osszeg: osszeg, hol: hol, mod: mod}];
-                            var request = objectStore.add(newItem[0]);
-                            request.onsuccess = function (evt) {
-                                //window.alert("Sikeres:");
-                            };
+                request.onupgradeneeded = function (evt) {
+                    var objectStore = evt.currentTarget.result.createObjectStore("tranzakciok", {keyPath: "id", autoIncrement: true});
+                    objectStore.createIndex("datum", "datum", {unique: false});
 
-                            request.onerror = function (evt) {
-                                //window.alert("Sikertelen");
-                            };
+                    var objectStore_Hol = evt.currentTarget.result.createObjectStore("hol_ok", {keyPath: "id", autoIncrement: true});
 
-                            transaction.oncomplete = function (evt) {
-                                 window.location.href = "tajekoztatas.html";
-                            };
+                    var i;
+                    for (i in minta) {
+                        objectStore.add(minta[i]);
+                    }
 
-                }, false);
-
-                initDb();
-                
+                    var j;
+                    for (j in minta_Hol) {
+                        objectStore_Hol.add(minta_Hol[j]);
+                    }
+                };
             }
 
-            ) ();
-        </script>
+
+
+
+            var btnAdd = document.getElementById("btnSaveTransaction");
+            btnAdd.addEventListener(
+                    "click", function () {
+                        var datum = document.getElementById("datum").value;
+                        var ido = document.getElementById("ido").value;
+                        var osszeg = document.getElementById("osszeg").value;
+                        var hol = document.getElementById("Hol").value;
+                        var mod = document.getElementById("Mod").value;
+                        
+                        
+                        var transaction = db.transaction("tranzakciok", "readwrite");
+                        var objectStore = transaction.objectStore("tranzakciok");
+                        var newItem = [{datum: datum, ido: ido, osszeg: osszeg, hol: hol, mod: mod}];
+                        var request = objectStore.add(newItem[0]);
+                        request.onsuccess = function (evt) {
+                            //window.alert("Sikeres:");
+                        };
+
+                        request.onerror = function (evt) {
+                            //window.alert("Sikertelen");
+                        };
+
+                        transaction.oncomplete = function (evt) {
+                            //db.close ();
+                            window.location.href = "tajekoztatas.html";
+                        };
+
+                    }, false);
+                    
+                    initDb();
+                    document.querySelector("div[role='main']").style.height="" + (screen.height-50) + "px";
+         </script>
     </body>
 </html>

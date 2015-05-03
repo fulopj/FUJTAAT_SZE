@@ -40,7 +40,7 @@
                 </header>
 
 
-                <div role="main" style="height: 700px">
+                <div role="main">
                     <table id="printOutput" style="border: 1px solid black">
                         <tr><th>Dátum</th><th>Idő</th><th>Összeg</th><th>Hol</th><th>Mód</th></tr>
                         
@@ -49,23 +49,21 @@
             </section></div>
 
         <script type="text/javascript">
-            (function listazas() {
+            function listazas() {
                 var db;
-                //var IDBTransaction_ = window.IDBTransaction;
                 var indexedDB = window.indexedDB;
 
                 var request = indexedDB.open("penz_adattar", 2);
                 request.onsuccess = function (evt) {
                     db = request.result;
                     
-                    var transaction_ = db.transaction("tranzakciok", "readwrite");
-                    var objectStore = transaction_.objectStore("tranzakciok");
+                    var transaction = db.transaction("tranzakciok", "readwrite");
+                    var objectStore = transaction.objectStore("tranzakciok");
 
-                    var request_ = objectStore.openCursor();
-                    request_.onsuccess = function (evt) {
+                    var kurzor_nyitas = objectStore.openCursor();
+                    kurzor_nyitas.onsuccess = function (evt) {
                         var cursor = evt.target.result;
                         var tr;
-                        
                         
                         if (cursor) {
                             tr = document.createElement("tr");
@@ -73,29 +71,21 @@
                             document.getElementById("printOutput").appendChild(tr);
                             cursor.continue();
                         }
-
-                        else {
-                            //console.log("No more entries!");
-                        }
                     };
-
                     
+                    transaction.oncomplete = function () {
+                        db.close ();
+                    };
                 };
 
                 request.onerror = function (evt) {
-                    console.log("IndexedDB Hiba: " + evt.target.errorCode);
+                    console.log ("IndexedDB Hiba Történt: " + evt.target.errorCode);
                 };
 
+              }
               
-
-            }
-            )();
-
-
-
-
-
-
+              listazas ();
+              document.querySelector("div[role='main']").style.height="" + (screen.height-50) + "px";
         </script>
     </body>
 </html>

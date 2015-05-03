@@ -19,7 +19,7 @@ and open the template in the editor.
         <link href="css/buttons.css" rel="stylesheet" type="text/css">
         <link href="css/toolbars.css" rel="stylesheet" type="text/css">
         <script src="jquery-1.11.2.min.js" type="text/javascript"></script>
-        
+
     </head>
     <body>
         <div>
@@ -45,10 +45,10 @@ and open the template in the editor.
                 <div role="main">
                     <section class="gaia-list fit scroll sticky">
                         <article>
-                            <form onsubmit="return false;" style="height: 700px">
+                            <form onsubmit="return false;">
                                 <label>Hol megnevezése: </label>
                                 <input type="text" id="hol_elnevezes" />
-                                
+
                                 <button class="recommend" id="btnHolHozzaadas">Hozzáadás</button>
                             </form>
                         </article>
@@ -60,64 +60,45 @@ and open the template in the editor.
             var db;
             var indexedDB = window.indexedDB;
 
-            (function () {
-                function initDb() {
-                    var request = indexedDB.open("penz_adattar", 2);
-                    request.onsuccess = function (evt) {
-                        db = request.result;
-                       // window.alert (db.toString());
-                    };
-                    
-                    request.onerror = function (evt) {
-                        console.log("IndexedDB Hiba: " + evt.target.errorCode);
-                    };
-                    
-                    request.onupgradeneeded = function (evt) {
-                        var objectStore = evt.currentTarget.result.createObjectStore(
-                                "tranzakciok", {keyPath: "id", autoIncrement: true});
-                        objectStore.createIndex("datum", "datum", {unique: false});
-                        
-                        objectStore_Hol = evt.currentTarget.result.createObjectStore(
-                                "hol_ok", {keyPath: "id", autoIncrement: true});
-                        
-                    };
-                }
-                
-                initDb();
-                
-                function contentLoaded() {
-                    var btnAdd = document.getElementById("btnHolHozzaadas");
-                    btnAdd.addEventListener("click", function () {
-                        var akt_hol = document.getElementById("hol_elnevezes").value;
-                        
-                        var transaction = db.transaction("hol_ok", "readwrite");
-                        var objectStore = transaction.objectStore("hol_ok");
-                        var newItem = [{megnevezes: akt_hol}];
-                        var request = objectStore.add(newItem[0]);
-                        request.onsuccess = function (evt) {
-                            //window.alert("Sikeres:");
-                            
-                        };
-                        
-                        request.onerror = function (evt) {
-                            window.alert("Sikertelen");
-                        };
-                        
-                        transaction.oncomplete = function (evt) {
-                            window.location = "hol_hozzaadasa.html";
-                        };
-                        
-                    }, false);
 
+            function initDb() {
+                var request = indexedDB.open("penz_adattar", 2);
+                request.onsuccess = function (evt) {
+                    db = request.result;
+                };
 
-                }
+                request.onerror = function (evt) {
+                    console.log("IndexedDB Hiba Történt: " + evt.target.errorCode);
+                };
 
-                window.addEventListener("DOMContentLoaded", contentLoaded, false);
+                request.onupgradeneeded = function (evt) {
+                    var objectStore = evt.currentTarget.result.createObjectStore("tranzakciok", {keyPath: "id", autoIncrement: true});
+                    objectStore.createIndex("datum", "datum", {unique: false});
+
+                    objectStore_Hol = evt.currentTarget.result.createObjectStore("hol_ok", {keyPath: "id", autoIncrement: true});
+                };
             }
 
-            ) ();
-                    //document.getElementById("Megtekint").addEventListener("click", initDb);
+            
+                var btnAdd = document.getElementById("btnHolHozzaadas");
+                btnAdd.addEventListener("click", function () {
+                    var akt_hol = document.getElementById("hol_elnevezes").value;
+
+                    
+                    var transaction = db.transaction("hol_ok", "readwrite");
+                    var objectStore = transaction.objectStore("hol_ok");
+                    var newItem = [{megnevezes: akt_hol}];
+                    var request = objectStore.add(newItem[0]);
+                    
+                    transaction.oncomplete = function (evt) {
+                        db.close ();
+                        window.location = "hol_megtekintese.html";
+                    };
+
+                }, false);
+                initDb();
+                document.querySelector("div[role='main']").style.height="" + (screen.height-50) + "px";
         </script>
-        
+
     </body>
 </html>
