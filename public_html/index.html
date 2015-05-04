@@ -82,8 +82,8 @@
             var indexedDB = window.indexedDB;
 
             var minta = [
-                {datum: "2015-01-01", ido: "00:00:00", osszeg: 1000, hol: "Minta söröző", mod: "Pénztárca"},
-                {datum: "2015-01-01", ido: "00:00:01", osszeg: 2000, hol: "Minta söröző", mod: "Bankkártya"}
+                {datum: "2015-01-01", ido: "00:00:00", osszeg: 0, hol: "Minta söröző", mod: "Pénztárca"},
+                {datum: "2015-01-01", ido: "00:00:01", osszeg: 0, hol: "Minta söröző", mod: "Bankkártya"}
             ];
 
             var minta_Hol = [
@@ -152,6 +152,7 @@
                             //window.alert("Kijött!!!");
                             osszeg = osszeg * (-1);
                         }
+                        
                         var newItem = [{datum: datum, ido: ido, osszeg: osszeg, hol: hol, mod: mod}];
                         var request = objectStore.add(newItem[0]);
                         request.onsuccess = function (evt) {
