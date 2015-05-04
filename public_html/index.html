@@ -55,6 +55,12 @@
                                 </select>
 
                                 <br />
+                                
+                                <label>Mérleg</label>
+                                <select id="Merleg">
+                                    <option>Bevétel</option>
+                                    <option>Kiadás</option>
+                                </select>
 
                                 <label>Költés módja</label><br />
                                 <select id="Mod">
@@ -76,12 +82,12 @@
             var indexedDB = window.indexedDB;
 
             var minta = [
-                {datum: "2015-01-01", ido: "00:00:00", osszeg: 1000, hol: "Vár söröző", mod: "Pénztárca"},
-                {datum: "2015-01-01", ido: "00:00:01", osszeg: 2000, hol: "Vár söröző", mod: "Bankkártya"}
+                {datum: "2015-01-01", ido: "00:00:00", osszeg: 1000, hol: "Minta söröző", mod: "Pénztárca"},
+                {datum: "2015-01-01", ido: "00:00:01", osszeg: 2000, hol: "Minta söröző", mod: "Bankkártya"}
             ];
 
             var minta_Hol = [
-                {megnevezes: "Bolt"}
+                {megnevezes: "Minta Bolt"}
             ];
 
             function initDb() {
@@ -137,10 +143,14 @@
                         var osszeg = document.getElementById("osszeg").value;
                         var hol = document.getElementById("Hol").value;
                         var mod = document.getElementById("Mod").value;
+                        var merleg = document.getElementById("Merleg").value;
                         
                         
                         var transaction = db.transaction("tranzakciok", "readwrite");
                         var objectStore = transaction.objectStore("tranzakciok");
+                        if (merleg.localCompare ("Kiadás")) {
+                            osszeg *= -1;
+                        }
                         var newItem = [{datum: datum, ido: ido, osszeg: osszeg, hol: hol, mod: mod}];
                         var request = objectStore.add(newItem[0]);
                         request.onsuccess = function (evt) {
