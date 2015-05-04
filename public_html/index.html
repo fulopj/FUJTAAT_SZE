@@ -148,8 +148,9 @@
                         
                         var transaction = db.transaction("tranzakciok", "readwrite");
                         var objectStore = transaction.objectStore("tranzakciok");
-                        if (merleg.localCompare ("Kiadás")) {
-                            osszeg *= -1;
+                        if (merleg === "Kiadás") {
+                            //window.alert("Kijött!!!");
+                            osszeg = osszeg * (-1);
                         }
                         var newItem = [{datum: datum, ido: ido, osszeg: osszeg, hol: hol, mod: mod}];
                         var request = objectStore.add(newItem[0]);
