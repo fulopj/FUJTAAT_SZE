@@ -2,6 +2,9 @@
   "name": "Penztarca",
   "description": "Pénztárca",
   "launch_path": "/index.html",
+  "icons": {
+    "200": "/img/icon-200.png"
+  },
   "developer": {
     "name": "Fülöp József",
     "url": "https://github.com/fulopj/FUJTAAT_SZE.git"
